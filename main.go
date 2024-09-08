@@ -114,8 +114,6 @@ func eventsHandlerfunc(w http.ResponseWriter, r *http.Request) {
 				// remove client from map
 				// fmt.Printf("Client connection close - %s \n", clientId)
 				updateClient(clientId, &flusher, &w, false)
-				_, err := fmt.Fprintf(w, "Client connection close - %s \n", clientId)
-				fmt.Printf("err - %s", err)
 				return
 			}
 		}
@@ -149,6 +147,9 @@ func main() {
 	wg.Add(1)
 	go func() {
 		http.HandleFunc("/events", eventsHandlerfunc)
+		http.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
+			fmt.Fprintf(w, "Serving")
+		})
 		http.HandleFunc("/render", func(w http.ResponseWriter, r *http.Request) {
 			fmt.Fprintf(w, `<!DOCTYPE html>
 <html lang="en">
