@@ -1,5 +1,5 @@
 # Step 1: Use an official Golang image as the build environment
-FROM golang:1.20-alpine AS builder
+FROM golang:1.23.0-alpine AS builder
 
 # Step 2: Set the working directory inside the container
 WORKDIR /app
