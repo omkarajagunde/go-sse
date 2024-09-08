@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"runtime"
 	"strconv"
 	"sync"
 	"time"
@@ -146,30 +145,8 @@ func eventsHandlerfunc(w http.ResponseWriter, r *http.Request) {
 
 }
 
-// PrintMemUsage outputs the current, total and OS memory being used. As well as the number
-// of garage collection cycles completed.
-func PrintMemUsage() {
-	defer wg.Done()
-	var m runtime.MemStats
-	runtime.ReadMemStats(&m)
-	for {
-		// For info on each, see: https://golang.org/pkg/runtime/#MemStats
-		fmt.Printf("Current mem usage = %v KB", bToMb(m.Alloc))
-		fmt.Printf("\tTotal used mem till now = %v KB", bToMb(m.TotalAlloc))
-		fmt.Printf("\t\tSys permitted mem = %v KB", bToMb(m.Sys))
-		fmt.Printf("\t\tNumGC = %v", m.NumGC)
-		fmt.Printf("\t\tActive sse listeners = %d\n", len(clients))
-		time.Sleep(2 * time.Second)
-	}
-}
-
-func bToMb(b uint64) uint64 {
-	return b / 1024
-}
-
 func main() {
-	wg.Add(2)
-	go PrintMemUsage()
+	wg.Add(1)
 	go func() {
 		http.HandleFunc("/events", eventsHandlerfunc)
 		http.HandleFunc("/render", func(w http.ResponseWriter, r *http.Request) {
